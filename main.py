@@ -98,5 +98,5 @@ while True:
     inputMoney = bank.sessionMoney()
     coins2Return = bank.calculateChange(products[code]) # tuple
     moneyReturner(coins2Return[0], coins2Return[1])
-    if (inputMoney == coins2Return[0]*10 + coins2Return[1]*50) : continue
+    if (inputMoney == (coins2Return[0]*10 + coins2Return[1]*50)) : continue
     signalisePurchase(code)
