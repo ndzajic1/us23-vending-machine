@@ -5,8 +5,9 @@ from machine import Pin
 import time
 
 # initial money in the machine
-# INIT_BALANCE =
-bank = Bank(INIT_BALANCE)
+# INIT_BALANCE10 =
+# INIT_BALANCE50 =
+bank = Bank(INIT_BALANCE10, INIT_BALANCE50)
 display = Display(bank)
 keypad = Keypad(display)
 
@@ -19,14 +20,14 @@ detector50 = Pin(KF50_PIN, Pin.IN)
 
 detector10.irq(
                handler = lambda p: (
-                            bank.addToBank(0.10),
+                            bank.addToBank(10),
                             display.refresh()
                                     ),
                trigger = Pin.IRQ_FALLING | Pin.IRQ_RISING
                )
 detector50.irq(
                handler = lambda p: (
-                            bank.addToBank(0.50),
+                            bank.addToBank(50),
                             display.refresh()
                                     ),
                trigger = Pin.IRQ_FALLING | Pin.IRQ_RISING
@@ -54,14 +55,15 @@ def moneyReturner(coins10, coins50):
         time.sleep(WAIT_SOL_ON)
         returner50.off()
         time.sleep(WAIT_SOL_OFF)
-    returnedMoney = 0.1 * coins10 + 0.5 * coins50
-    bank.returnMoney(returnedMoney)
+    #returnedMoney = 0.1 * coins10 + 0.5 * coins50
+    #bank.returnMoney(returnedMoney)
 
 # product codes with their prices, stored in dictionary where key = code, value = price"
 products = {
-            "A01": 0.80,
-            "A02": 1.20,
-            "A03": 1.50
+            "A01": 80,
+            "A02": 120,
+            "A03": 150,
+            "-"  : 0;
             }
 
 # Pin numbers for leds signalising product purchase
@@ -77,7 +79,7 @@ leds = {
 
 # time for led to be on
 # LED_WAIT_TIME =
-def signalisePurchase(product):
+def signalisePurchase(product): 
     leds[product].on()
     time.sleep(LED_WAIT_TIME)
     leds[product].off()
@@ -89,12 +91,12 @@ while True:
     code = keypad.input()
     if not code in products:
         display.showMessage("Ne postoji artikl s tim kodom.")
-        continue
+        code = "-"
     elif products[code] > bank.sessionMoney():
         display.showMessage("Niste ubacili dovoljno love.")
-        continue
-    money2Return = bank.sessionMoney() - products[code]
-    coins2Return = calculateCoins(money2Return) # tuple
+        code = "-"
+    inputMoney = bank.sessionMoney()
+    coins2Return = bank.calculateChange(products[code]) # tuple
     moneyReturner(coins2Return[0], coins2Return[1])
+    if (inputMoney == (coins2Return[0]*10 + coins2Return[1]*50)) : continue
     signalisePurchase(code)
-    
