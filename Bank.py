@@ -35,5 +35,5 @@ class Bank:
         self.balance10 -= coins10
         return (coins10, coins50)
     
-    def getCurrentSession(self):
+    def sessionMoney(self):
         return self.session
