@@ -17,15 +17,20 @@ class Bank:
     def calculateChange(self, productPrice):
         
         change = int((self.session - productPrice) * 100 + 0.5)
-
-        if change < 0:
+        print("Change:" + str(change))
+        if change == 0:
+            return (0,0)
+        elif change < 0:
             return self.calculateChange(0.00)
-
+        
+        
         coins2KM = int(change // 200)
+        print("Change 2KM:" + str(coins2KM))
         change -= coins2KM * 200
+        print("Change:" + str(change))
         coins10kf = int(change // 10)
-        print(coins10kf)
-        if self.balance10kf < coins10kf:
+        print("Change 10 kf:" + str(coins10kf))
+        """if self.balance10kf < coins10kf:
             return self.calculateChange(0)
         
         elif self.balance2KM < coins2KM:
@@ -33,7 +38,7 @@ class Bank:
             coins2KM = self.balance2KM
             if self.balance10kf < coins10kf:
                 return self.calculateChange(0)
-            
+        """  
         self.balance2KM -= coins2KM
         self.balance10kf -= coins10kf
         self.session -= productPrice

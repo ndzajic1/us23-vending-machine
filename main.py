@@ -7,8 +7,8 @@ from machine import Pin, Timer
 import time
 
 # initial money in the machine
-INIT_BALANCE10kf = 2
-INIT_BALANCE2KM = 2
+INIT_BALANCE10kf = 0
+INIT_BALANCE2KM = 0
 
 bank = Bank(INIT_BALANCE10kf, INIT_BALANCE2KM)
 display = Display(bank)
@@ -78,7 +78,6 @@ products = {
             "A01": 1.80,
             "A02": 2.00,
             "A03": 2.10,
-            "A__": 0.10,
             "-"  : 0
             }
 
@@ -106,21 +105,24 @@ while True:
     print("thr")
     display.refresh()
     code = keypad.input()
-    if not code in products:
+    while not code in products:
         display.showMessage("Netacan kod")
-        code = "-"
+        #code = "-"
         time.sleep(3)
         display.showMessage("Odaberite artikl:")
-    elif products[code] > bank.sessionMoney():
+        code = keypad.input()
+    if products[code] > bank.sessionMoney():
         display.showMessage("Nedovoljno novca.")
         code = "-"
         time.sleep(3)
         display.showMessage("Odaberite artikl:")
     #inputMoney = bank.sessionMoney()
+    print("code:" + code + ", money = " + str(bank.sessionMoney()) + ",prod:"+str(products[code]))
     coins2Return = bank.calculateChange(products[code]) # tuple
     print("(" + str(coins2Return[0]) + "," + str(coins2Return[1]))
+    
     signalisePurchase(code)
-    time.sleep(2)
+        #time.sleep(2)
     moneyReturner(coins2Return[0], coins2Return[1])
     time.sleep(2)
     bank.sessionStart()
@@ -128,7 +130,7 @@ while True:
     time.sleep(4)
     #if inputMoney == (coins2Return[0] * 0.10 + coins2Return[1] * 2.00):
     #    continue
-    bank.sessionStart()
+    #bank.sessionStart()
     
 
 
